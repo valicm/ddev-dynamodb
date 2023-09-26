@@ -1,0 +1,19 @@
+version: '3.6'
+services:
+  dynamodb:
+    container_name: "ddev-${DDEV_SITENAME}-dynamodb"
+    hostname: ${DDEV_SITENAME}-dynamodb
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8000:8000"
+    command: [ "-jar", "DynamoDBLocal.jar", "-sharedDb" ]
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+    volumes:
+      - dynamodb:/var/dynamodb
+      - ".:/mnt/ddev_config"
+
+volumes:
+  dynamodb:
+    name: "ddev-${DDEV_SITENAME}_dynamodb"
