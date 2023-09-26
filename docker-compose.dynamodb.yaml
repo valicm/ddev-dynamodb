@@ -1,18 +1,23 @@
+#ddev-generated
 version: '3.6'
 services:
   dynamodb:
     container_name: "ddev-${DDEV_SITENAME}-dynamodb"
     hostname: ${DDEV_SITENAME}-dynamodb
     image: amazon/dynamodb-local:latest
+    # When mounting a volume and using -dbPath DynamoDb is crashing. Run as root.
+    # @see https://stackoverflow.com/questions/45850688/unable-to-open-local-dynamodb-database-file-after-power-outage
+    user: root
     ports:
       - "8000:8000"
-    command: [ "-jar", "DynamoDBLocal.jar", "-sharedDb" ]
+    command: "-jar DynamoDBLocal.jar -dbPath ./databases"
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
     volumes:
-      - dynamodb:/var/dynamodb
+      - "dynamodb:/home/dynamodblocal/databases"
       - ".:/mnt/ddev_config"
+    working_dir: /home/dynamodblocal
 
 volumes:
   dynamodb:
